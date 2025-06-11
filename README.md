@@ -40,10 +40,10 @@ One of BloodHound’s key features is its flexibility through Cypher queries –
 
 Queries can answer anything from simple questions (e.g., “*Which users haven’t reset their passwords in 180 days?*”), to complex identity attack path problems (e.g., “*Which low-privileged users can compromise computers hosting a gMSA with unconstrained delegation?*”).
 
-The library gives you practical examples for learning Cypher and can be combined with the following resources:
+The library gives you practical examples for learning Cypher and can be combined with these resources:
 - [BloodHound documentation: Searching with Cypher](https://support.bloodhoundenterprise.io/hc/en-us/articles/16721164740251)
 - [openCypher resources](https://opencypher.org/resources/)
-- [Neo4j Cypher Cheat Sheet](https://opencypher.org/resources/)
+- [Neo4j Cypher Cheat Sheet](https://neo4j.com/docs/cypher-cheat-sheet/current/lists/)
 
 You can also learn with the communty by joining the #cypher_queries channel in the [BloodHound community Slack](https://support.bloodhoundenterprise.io/hc/en-us/articles/16730536907547).
 
