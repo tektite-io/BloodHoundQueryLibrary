@@ -1,0 +1,25 @@
+# This file describes the basic YAML structure of a query in the BloodHound Query Library
+# Please use it as a template when creating new queries
+name: The name of the query.
+guid: 51cd8e42-f795-4551-a009-61395e6cedf5 # Unique GUID for the query, for example from PowerShell Cmdlet `New-Guid`.
+prebuilt: false # Whether the query is part of the default query set in BloodHound's Pre-built Searches. Your custom query must set this to false.
+platform: Active Directory # One or more platforms the query targets/shows risk in.
+# Use a list for multiple platforms:
+# - Active Directory
+# - Azure
+category: The category of the query # Should be one of the existing categories in BloodHound's Pre-built Searches.
+description: Short description of the query.
+query: |-
+  // My clean and well-commented Cypher query
+  MATCH p = (b:BloodHoundUsers) - [h:ThinkIn] -> (e:Graphs)
+  RETURN p
+note: Note meant to be stored only in the yml file.
+revision: 1 # Version number integer starting at 1.
+resources:  # URL references, for example related to Acknowledgements.
+# Use a list for multiple Resources:
+# - https://specterops.io/
+# - https://posts.specterops.io/bloodhound-community-edition-a-new-era-d64689806e90
+acknowledgements: Name of Person, @TheirHandle # For example the query author
+# Use a list for multiple Acknowledgements:
+# - Martin Sohn Christensen, @martinsohndk
+# - Joey Dreijer, @d3vzer0
