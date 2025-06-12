@@ -17,6 +17,7 @@ Run on: {{ data.timestamp }}
 ```
 {{ test.query }}
 ```
+{% endif %}
 - Path: `{{ test.path }}`
 - Reason: {{ test.message }}
 - Duration: {{ "%.2f"|format(test.duration) }}s
