@@ -11,6 +11,5 @@ query: |-
 note: 
 revision: 1
 resources: https://learn.microsoft.com/en-us/azure/governance/management-groups/overview
-acknowledgement: Martin Sohn Christensen, @martinsohndk
 acknowledgements: Martin Sohn Christensen, @martinsohndk
 
