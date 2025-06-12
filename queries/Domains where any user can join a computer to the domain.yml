@@ -1,0 +1,17 @@
+name: Domains where any user can join a computer to the domain
+guid: 421921fa-bc0f-4659-9680-b7481adcb132
+prebuilt: true
+platform: Active Directory
+category: Active Directory Hygiene
+description: 
+query: |-
+  MATCH (n:Domain)
+  WHERE n.machineaccountquota > 0
+  RETURN n
+note: Does not check the 'Add workstations to domain' URA Security Policy on DCs.
+revision: 1
+resources: 
+- https://learn.microsoft.com/en-us/troubleshoot/windows-server/active-directory/default-workstation-numbers-join-domain
+- https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-10/security/threat-protection/security-policy-settings/add-workstations-to-domain
+acknowledgements: 
+

@@ -1,0 +1,16 @@
+name: Shortest paths to Azure Subscriptions
+guid: 4785b305-c101-461c-80fc-3fb3ff67a8ce
+prebuilt: true
+platform: Azure
+category: Shortest Paths
+description: 
+query: |-
+  MATCH p=shortestPath((s:AZBase)-[:AZAvereContributor|AZContributor|AZGetCertificates|AZGetKeys|AZGetSecrets|AZHasRole|AZMemberOf|AZOwner|AZRunsAs|AZVMContributor|AZAutomationContributor|AZKeyVaultContributor|AZVMAdminLogin|AZAddMembers|AZAddSecret|AZExecuteCommand|AZGlobalAdmin|AZPrivilegedAuthAdmin|AZGrant|AZGrantSelf|AZPrivilegedRoleAdmin|AZResetPassword|AZUserAccessAdministrator|AZOwns|AZCloudAppAdmin|AZAppAdmin|AZAddOwner|AZManagedIdentity|AZAKSContributor|AZNodeResourceGroup|AZWebsiteContributor|AZLogicAppContributor|AZMGAddMember|AZMGAddOwner|AZMGAddSecret|AZMGGrantAppRoles|AZMGGrantRole|SyncedToADUser|AZRoleEligible|AZContains*1..]->(t:AZSubscription))
+  WHERE s<>t
+  RETURN p
+  LIMIT 1000
+note: 
+revision: 1
+resources: 
+acknowledgements: 
+

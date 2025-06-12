@@ -1,0 +1,16 @@
+name: Dangerous privileges for Domain Users groups
+guid: 9b8b9c18-f8c6-4c54-a20f-de0f7a7edbe0
+prebuilt: true
+platform: Active Directory
+category: Dangerous Privileges
+description: 
+query: |-
+  MATCH p=(s:Group)-[:Owns|GenericAll|GenericWrite|WriteOwner|WriteDacl|MemberOf|ForceChangePassword|AllExtendedRights|AddMember|HasSession|GPLink|AllowedToDelegate|CoerceToTGT|AllowedToAct|AdminTo|CanPSRemote|CanRDP|ExecuteDCOM|HasSIDHistory|AddSelf|DCSync|ReadLAPSPassword|ReadGMSAPassword|DumpSMSAPassword|SQLAdmin|AddAllowedToAct|WriteSPN|AddKeyCredentialLink|SyncLAPSPassword|WriteAccountRestrictions|WriteGPLink|GoldenCert|ADCSESC1|ADCSESC3|ADCSESC4|ADCSESC6a|ADCSESC6b|ADCSESC9a|ADCSESC9b|ADCSESC10a|ADCSESC10b|ADCSESC13|SyncedToEntraUser|CoerceAndRelayNTLMToSMB|CoerceAndRelayNTLMToADCS|WriteOwnerLimitedRights|OwnsLimitedRights|CoerceAndRelayNTLMToLDAP|CoerceAndRelayNTLMToLDAPS|Contains|DCFor|SameForestTrust|SpoofSIDHistory|AbuseTGTDelegation]->(:Base)
+  WHERE s.objectid ENDS WITH '-513'
+  RETURN p
+  LIMIT 1000
+note: 
+revision: 1
+resources: 
+acknowledgements: 
+

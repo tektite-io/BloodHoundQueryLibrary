@@ -1,0 +1,16 @@
+name: Shortest paths from Azure Applications to Tier Zero / High Value targets
+guid: 60ff7c58-a98e-4bc1-9e32-8378d2db0c43
+prebuilt: true
+platform: Azure
+category: Shortest Paths
+description: 
+query: |-
+  MATCH p=shortestPath((s:AZApp)-[:AZAvereContributor|AZContributor|AZGetCertificates|AZGetKeys|AZGetSecrets|AZHasRole|AZMemberOf|AZOwner|AZRunsAs|AZVMContributor|AZAutomationContributor|AZKeyVaultContributor|AZVMAdminLogin|AZAddMembers|AZAddSecret|AZExecuteCommand|AZGlobalAdmin|AZPrivilegedAuthAdmin|AZGrant|AZGrantSelf|AZPrivilegedRoleAdmin|AZResetPassword|AZUserAccessAdministrator|AZOwns|AZCloudAppAdmin|AZAppAdmin|AZAddOwner|AZManagedIdentity|AZAKSContributor|AZNodeResourceGroup|AZWebsiteContributor|AZLogicAppContributor|AZMGAddMember|AZMGAddOwner|AZMGAddSecret|AZMGGrantAppRoles|AZMGGrantRole|SyncedToADUser|AZRoleEligible|AZContains*1..]->(t:AZBase))
+  WHERE ((t:Tag_Tier_Zero) OR COALESCE(t.system_tags, '') CONTAINS 'admin_tier_0') AND s<>t
+  RETURN p
+  LIMIT 1000
+note: 
+revision: 1
+resources: 
+acknowledgements: 
+

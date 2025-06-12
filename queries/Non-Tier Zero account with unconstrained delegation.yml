@@ -1,0 +1,16 @@
+name: Non-Tier Zero account with unconstrained delegation
+guid: e7e9a927-3f34-42c7-b921-d8bcf626011e
+prebuilt: false
+platform: Active Directory
+category: Dangerous Privileges
+description: 
+query: |-
+  MATCH (n:Base)
+  WHERE n.unconstraineddelegation = true
+  AND NOT ((n:Tag_Tier_Zero) OR COALESCE(n.system_tags, '') CONTAINS 'admin_tier_0')
+  RETURN n
+note: 
+revision: 1
+resources: 
+acknowledgements: Martin Sohn Christensen, @martinsohndk
+

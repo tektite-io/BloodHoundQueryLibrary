@@ -1,0 +1,18 @@
+name: Computers with non-default Primary Group membership
+guid: 5862dc4e-6f6f-4321-9474-d838968495ed
+prebuilt: false
+platform: Active Directory
+category: Active Directory Hygiene
+description: 
+query: |-
+  MATCH p=(n:Computer)-[r:MemberOf]->(g:Group)
+  WHERE NOT g.objectid ENDS WITH "-515" // Domain Computers
+  AND NOT g.objectid ENDS WITH "-516" // Domain Controllers
+  AND NOT g.objectid ENDS WITH "-521" // Read-Only Domain Controllers
+  AND r.isprimarygroup = true
+  RETURN p
+note: 
+revision: 1
+resources: 
+acknowledgements: Martin Sohn Christensen, @martinsohndk
+

@@ -1,0 +1,15 @@
+name: All Global Administrators
+guid: 94d7d765-6837-4eb8-aa33-e1c9ef262cdc
+prebuilt: true
+platform: Azure
+category: General
+description: 
+query: |-
+  MATCH p = (:AZBase)-[:AZGlobalAdmin*1..]->(:AZTenant)
+  RETURN p
+  LIMIT 1000
+note: 
+revision: 1
+resources: 
+acknowledgements: 
+
