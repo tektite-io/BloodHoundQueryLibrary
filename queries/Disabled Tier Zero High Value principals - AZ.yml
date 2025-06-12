@@ -1,0 +1,17 @@
+name: Disabled Tier Zero / High Value principals
+guid: 860d5c2d-84fe-4c85-80de-e0a9badbd0e7
+prebuilt: true
+platform: Azure
+category: Azure Hygiene
+description: 
+query: |-
+  MATCH (n:AZBase)
+  WHERE ((n:Tag_Tier_Zero) OR COALESCE(n.system_tags, '') CONTAINS 'admin_tier_0')
+  AND n.enabled = false
+  RETURN n
+  LIMIT 100
+note: 
+revision: 1
+resources: 
+acknowledgements: 
+

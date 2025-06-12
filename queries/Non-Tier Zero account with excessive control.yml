@@ -1,0 +1,20 @@
+name: Non-Tier Zero account with excessive control
+guid: 944cecfe-519b-4318-b226-e8520161b454
+prebuilt: false
+platform: Active Directory
+category: Dangerous Privileges
+description: 
+query: |-
+  MATCH (d:Domain)-[:Contains*1..]->(u:User)
+  WHERE u.enabled = true
+  WITH d, COUNT(u) AS enabledUserCount
+  MATCH (d)-[:Contains*1..]->(n:Base)-[r:Owns|GenericAll|GenericWrite|WriteOwner|WriteDacl|ForceChangePassword|AllExtendedRights|AddMember|AllowedToDelegate|AllowedToAct|AdminTo|CanPSRemote|CanRDP|ExecuteDCOM|HasSIDHistory|AddSelf|ReadLAPSPassword|ReadGMSAPassword|DumpSMSAPassword|SQLAdmin|AddAllowedToAct|WriteSPN|AddKeyCredentialLink|SyncLAPSPassword|WriteAccountRestrictions]->(m:Base)
+  WHERE NOT ((n:Tag_Tier_Zero) OR COALESCE(n.system_tags, '') CONTAINS 'admin_tier_0')
+  WITH n, enabledUserCount, COLLECT(DISTINCT(m)) AS endNodes
+  WHERE SIZE(endNodes) >= 1000
+  RETURN n
+note: Finds Non-Tier Zero principals with control of >1000 Non-Tier Zero principals
+revision: 1
+resources: 
+acknowledgements: Martin Sohn Christensen, @martinsohndk
+

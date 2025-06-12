@@ -1,0 +1,15 @@
+name: Tier Zero computers not owned by Tier Zero
+guid: 99d29ded-223a-442b-a0e0-f8b5694c6441
+prebuilt: false
+platform: Active Directory
+category: Dangerous Privileges
+description: 
+query: |-
+  MATCH p=(n:Base)-[:Owns]->(:Computer)
+  WHERE NOT coalesce(n.system_tags, "") CONTAINS "admin_tier_0"
+  RETURN p
+note: 
+revision: 1
+resources: 
+acknowledgements: Martin Sohn Christensen, @martinsohndk
+

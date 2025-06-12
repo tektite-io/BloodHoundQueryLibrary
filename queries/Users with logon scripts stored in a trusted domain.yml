@@ -1,0 +1,18 @@
+name: Users with logon scripts stored in a trusted domain
+guid: 8d94d3f3-3d53-4939-a206-3c0a4dd3f646
+prebuilt: false
+platform: Active Directory
+category: Active Directory Hygiene
+description: 
+query: |-
+  MATCH (n:User)
+  WHERE n.logonscript IS NOT NULL
+  MATCH (d:Domain)-[:TrustedBy]->(:Domain)-[:Contains*1..]->(n)
+  WITH n,last(split(d.name, '@')) AS domain
+  WHERE toUpper(n.logonscript) STARTS WITH ("\\\\" + domain + "\\")
+  RETURN n
+note: 
+revision: 1
+resources: 
+acknowledgements: Martin Sohn Christensen, @martinsohndk
+

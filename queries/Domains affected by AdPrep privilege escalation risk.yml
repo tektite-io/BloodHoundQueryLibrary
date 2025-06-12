@@ -1,0 +1,16 @@
+name: Domains affected by AdPrep privilege escalation risk
+guid: 815ff190-f6f3-4757-a516-2f4bf589b705
+prebuilt: false
+platform: Active Directory
+category: Dangerous Privileges
+description: 
+query: |-
+  MATCH p=(n:Group)-[r:GenericAll]->(m:Domain)
+  WHERE n.objectid ENDS WITH "-527" // Enterprise Key Admins
+  AND NOT ((n:Tag_Tier_Zero) OR COALESCE(n.system_tags, '') CONTAINS 'admin_tier_0')
+  RETURN p
+note: 
+revision: 1
+resources: 
+acknowledgements: Martin Sohn Christensen, @martinsohndk
+
