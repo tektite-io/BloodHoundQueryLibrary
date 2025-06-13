@@ -13,10 +13,6 @@ query: |-
   WITH n, enabledUserCount, COLLECT(DISTINCT(m)) AS endNodes
   WHERE SIZE(endNodes) >= 1000
   RETURN n
-<<<<<<< Updated upstream
-note: Finds Non-Tier Zero principals with control of >1000 Non-Tier Zero principals
-=======
->>>>>>> Stashed changes
 revision: 1
 resources: 
 acknowledgements: Martin Sohn Christensen, @martinsohndk

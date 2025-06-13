@@ -1,7 +1,7 @@
 name: Enrollment rights on published ESC15 certificate templates
 guid: 78d59fe1-e1a0-4813-adc9-c3c96ac08b66
 prebuilt: false
-platform: Active Directory
+platforms: Active Directory
 category: Active Directory Certificate Services
 description: Enrollment rights on certificate templates that meet the requirements for the ADCS ESC15 (EKUwu) attack.
 query: |-

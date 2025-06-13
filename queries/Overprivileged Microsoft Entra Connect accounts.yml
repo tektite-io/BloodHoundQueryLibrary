@@ -1,7 +1,7 @@
 name: Overprivileged Microsoft Entra Connect accounts
 guid: 9e6e75b4-9ecc-45d4-a39b-b6427b813f0a
 prebuilt: false
-platform:
+platforms:
 - Active Directory
 - Azure
 category: Active Directory Hygiene

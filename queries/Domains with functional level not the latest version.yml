@@ -8,7 +8,6 @@ query: |-
   MATCH (n:Domain)
   WHERE toString(n.functionallevel) IN ['2008','2003','2003 Interim','2000 Mixed/Native']
   RETURN  n
-note: Functional level <4
 revision: 1
 resources: 
 acknowledgements: Martin Sohn Christensen, @martinsohndk
