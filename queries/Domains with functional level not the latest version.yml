@@ -8,10 +8,9 @@ query: |-
   MATCH (n:Domain)
   WHERE (
     n.functionallevel IS NULL
-    OR NOT n.functionallevel = "2016"
+    OR NOT n.functionallevel IN ["2016","2025"]
   )
   RETURN  n
-note: 
 revision: 1
 resources: https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/active-directory-functional-levels
 acknowledgements: Martin Sohn Christensen, @martinsohndk
