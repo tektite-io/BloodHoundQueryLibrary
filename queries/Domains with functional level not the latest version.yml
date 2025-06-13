@@ -6,10 +6,13 @@ category: Active Directory Hygiene
 description: Check for functional level <4
 query: |-
   MATCH (n:Domain)
-  WHERE toString(n.functionallevel) IN ['2008','2003','2003 Interim','2000 Mixed/Native']
+  WHERE (
+    n.functionallevel IS NULL
+    OR NOT n.functionallevel = "2016"
+  )
   RETURN  n
 note: 
 revision: 1
-resources: 
+resources: https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/active-directory-functional-levels
 acknowledgements: Martin Sohn Christensen, @martinsohndk
 
