@@ -1,7 +1,7 @@
 name: Non-Tier Zero principals with BadSuccessor rights (with prerequisites check)
 guid: 74daaebe-6040-4f7a-9c9a-416faf73dcc3
 prebuilt: false
-platform: Active Directory
+platforms: Active Directory
 category: Dangerous Privileges
 description: Finds non-Tier Zero principals with BadSuccessor rights after checking prerequisites check (DC2025 & KDC key).
 query: |-
