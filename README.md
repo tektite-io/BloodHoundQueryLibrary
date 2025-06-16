@@ -1,15 +1,39 @@
+<p align="center">
+    <a href="https://github.com/SpecterOps/BloodHoundQueryLibrary">
+        <img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fspecterops%2F.github%2Fmain%2Fconfig%2Fshield.json"
+        alt="Sponsored by SpecterOps"/>
+    </a>
+    <a href="https://ghst.ly/BHSlack">
+        <img src="https://img.shields.io/badge/Slack-%23cypher_queries-blueviolet?logo=slack" 
+        alt="Slack"/>
+    </a>
+    <a href="https://github.com/SpecterOps/BloodHoundQueryLibrary/actions">
+        <img src="https://github.com/SpecterOps/BloodHoundQueryLibrary/actions/workflows/syntax.yml/badge.svg"
+        alt="Syntax check"/>
+    </a>
+</p>
+
+
 # BloodHound Query Library 
-![Syntax test](https://github.com/SpecterOps/BloodHoundQueryLibrary/actions/workflows/syntax.yml/badge.svg)
 
 The BloodHound Query Library is a community-driven collection of [Cypher queries](https://support.bloodhoundenterprise.io/hc/en-us/articles/16721164740251) designed to help [BloodHound Community Edition](https://github.com/SpecterOps/BloodHound) and [BloodHound Enterprise](https://specterops.io/bloodhound-overview/) users to unlock the full potential of the flexible BloodHound platform by creating an open query ecosystem.
 
 The library is a free tool for the community maintained in a human-readable format (YAML) through this repository and the sleek and searchable front-end is found at https://queries.specterops.io/
 
+![BloodHound Query Library frontend screenshot](queries.specterops.io.png)
+
+For an introduction to the project, please read our blog post:
+
+- [Introducing the BloodHound Query Library](https://specterops.io/blog/2025/06/17/introducing-the-bloodhound-query-library/)
+
+# Overview
+
 The library contains queries that demonstrate BloodHound's versatility beyond traditional attack path analysis. This includes:
 - All existing pre-built queries from BloodHound
 - Cherry-picked community queries
 - SpecterOps-created queries BloodHound Enterprise customers found valuable
-- Novel queries to further showcase BloodHound's security assessment capabilities, see [security-assessment-mapping.md](/docs/security-assessment-mapping.md)
+- Community contributed queries (see [Contributing](#contributing))
+- Novel queries to further showcase BloodHound's security assessment capabilities (see [security-assessment-mapping.md](/docs/security-assessment-mapping.md))
 
 Individual query files are stored in stored in [/Queries](/Queries/) as `.yml` and are automatically combined into a single  [Queries.json](/Queries.json) file that powers the front-end.
 
@@ -19,7 +43,7 @@ The query files use the YAML structure found in [query-structure.yml](/docs/quer
 name: Entra ID SSO accounts not rolling Kerberos decryption key
 guid: 1867abf8-08e3-4ea8-8f65-8366079d35c4
 prebuilt: false
-platform: 
+platforms: 
 - Active Directory
 - Azure
 category: Configuration Weakness
@@ -29,13 +53,14 @@ query: |-
   WHERE n.name STARTS WITH "AZUREADSSOACC."
   AND n.pwdlastset < (datetime().epochseconds - (30 * 86400))
   RETURN n
-note: 
 revision: 1
 resources: https://learn.microsoft.com/en-us/entra/identity/hybrid/connect/how-to-connect-sso-faq#how-can-i-roll-over-the-kerberos-decryption-key-of-the--azureadsso--computer-account-
 acknowledgements: Martin Sohn Christensen, @martinsohndk
 ```
 
-## Learning Cypher
+Whenever new queries are added, the syntax is automatically validated, ensuring that only syntactically compatible queries are added.
+
+## Learning Cypher Queries
 One of BloodHound’s key features is its flexibility through Cypher queries – a query language to search the BloodHound graph database.
 
 Queries can answer anything from simple questions (e.g., “*Which users haven’t reset their passwords in 180 days?*”), to complex identity attack path problems (e.g., “*Which low-privileged users can compromise computers hosting a gMSA with unconstrained delegation?*”).
