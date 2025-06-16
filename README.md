@@ -20,6 +20,8 @@ The BloodHound Query Library is a community-driven collection of [Cypher queries
 
 The library is a free tool for the community maintained in a human-readable format (YAML) through this repository and the sleek and searchable front-end is found at https://queries.specterops.io/
 
+![BloodHound Query Library frontend screenshot](queries.specterops.io.png)
+
 For more of an introduction to the project, please reference our blog post:
 
 - [Introducing the BloodHound Query Library](https://posts.specterops.io/....)
