@@ -22,9 +22,9 @@ The library is a free tool for the community maintained in a human-readable form
 
 ![BloodHound Query Library frontend screenshot](queries.specterops.io.png)
 
-For more of an introduction to the project, please reference our blog post:
+For an introduction to the project, please read our blog post:
 
-- [Introducing the BloodHound Query Library](https://posts.specterops.io/....)
+- [Introducing the BloodHound Query Library](https://specterops.io/blog/2025/06/17/introducing-the-bloodhound-query-library/)
 
 # Overview
 
