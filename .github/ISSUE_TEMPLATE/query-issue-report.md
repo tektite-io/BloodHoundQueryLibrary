@@ -67,7 +67,7 @@ body:
     id: bloodhound_db
     attributes:
       label: BloodHound DB
-      description: The database used for BloodHound
+      description: "The database used for BloodHound (hint: CE uses Neo4j by default, while BHE is always Postgres)"
       placeholder: e.g. Neo4j or Postgres
     validations:
       required: true
