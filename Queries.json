@@ -1580,8 +1580,8 @@
     ],
     "category": "Shortest Paths",
     "description": null,
-    "query": "MATCH p=shortestPath((s:AZUser)-[:AZ_ATTACK_PATHS*1..]->(t:AZBase))\nWHERE (t:AZBase) AND t.name =~ '(?i)Global Administrator|User Administrator|Cloud Application Administrator|Authentication Policy Administrator|Exchange Administrator|Helpdesk Administrator|Privileged Authentication Administrator' AND s<>t\nAND ((t:Tag_Tier_Zero) OR COALESCE(t.system_tags, '') CONTAINS 'admin_tier_0')\nRETURN p\nLIMIT 1000",
-    "revision": 2,
+    "query": "MATCH p=shortestPath((s:AZUser)-[:AZ_ATTACK_PATHS*1..]->(t:AZBase))\nWHERE ((t:Tag_Tier_Zero) OR COALESCE(t.system_tags, '') CONTAINS 'admin_tier_0')\nRETURN p\nLIMIT 1000",
+    "revision": 3,
     "resources": [],
     "acknowledgements": []
   },
@@ -2422,8 +2422,8 @@
     ],
     "category": "Shortest Paths",
     "description": null,
-    "query": "MATCH p=shortestPath((s:AZBase)-[:AZ_ATTACK_PATHS*1..]->(t:AZRole))\nWHERE t.name =~ '(?i)Global Administrator|User Administrator|Cloud Application Administrator|Authentication Policy Administrator|Exchange Administrator|Helpdesk Administrator|Privileged Authentication Administrator' AND s<>t\nRETURN p\nLIMIT 1000",
-    "revision": 2,
+    "query": "MATCH p=shortestPath((s:AZBase)-[:AZ_ATTACK_PATHS*1..]->(t:AZRole))\nWHERE t.name =~ '(?i)Global Administrator|User Administrator|Cloud Application Administrator|Authentication Policy Administrator|Exchange Administrator|Helpdesk Administrator|Privileged Authentication Administrator|Privileged Role Administrator' AND s<>t\nRETURN p\nLIMIT 1000",
+    "revision": 3,
     "resources": [],
     "acknowledgements": []
   },
@@ -2636,8 +2636,8 @@
     ],
     "category": "General",
     "description": null,
-    "query": "MATCH p=(t:AZRole)<-[:AZHasRole|AZMemberOf*1..2]-(:AZBase)\nWHERE t.name =~ '(?i)Global Administrator|User Administrator|Cloud Application Administrator|Authentication Policy Administrator|Exchange Administrator|Helpdesk Administrator|Privileged Authentication Administrator'\nRETURN p\nLIMIT 1000",
-    "revision": 1,
+    "query": "MATCH p=(t:AZRole)<-[:AZHasRole|AZMemberOf*1..2]-(:AZBase)\nWHERE t.name =~ '(?i)Global Administrator|User Administrator|Cloud Application Administrator|Authentication Policy Administrator|Exchange Administrator|Helpdesk Administrator|Privileged Authentication Administrator|Privileged Role Administrator'\nRETURN p\nLIMIT 1000",
+    "revision": 2,
     "resources": [],
     "acknowledgements": []
   },
