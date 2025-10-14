@@ -88,8 +88,8 @@
     ],
     "category": "Domain Information",
     "description": "All incoming and local paths for a specific computer; incoming from domain objects and paths local inside the computer.",
-    "query": "// Replace 'HOSTNAME' with the computer's shortname eg. 'SRV01', not FQDN\nMATCH p=(n:Base)-[:RemoteInteractiveLogonPrivilege|AdminTo|CanRDP|LocalToComputer|MemberOfLocalGroup]-(m:Base)\nWHERE m.name CONTAINS 'HOSTNAME'\nAND m.name CONTAINS '.' // Only see computer-related objects (eg. not AD Groups)\nRETURN p",
-    "revision": 1,
+    "query": "// Replace 'HOSTNAME' with the computer's shortname eg. 'SRV01', not FQDN\nMATCH p=(n:Base)-[:RemoteInteractiveLogonRight|AdminTo|CanRDP|LocalToComputer|MemberOfLocalGroup]-(m:Base)\nWHERE m.name CONTAINS 'HOSTNAME'\nAND m.name CONTAINS '.' // Only see computer-related objects (eg. not AD Groups)\nRETURN p",
+    "revision": 2,
     "resources": [],
     "acknowledgements": [
       "Martin Sohn Christensen, @martinsohndk"
@@ -176,6 +176,24 @@
     "resources": [],
     "acknowledgements": [
       "Martin Sohn Christensen, @martinsohndk"
+    ]
+  },
+  {
+    "name": "All GPOs applied to a specific Computer",
+    "guid": "1d75a21e-0d34-40c5-9360-281b60737d87",
+    "prebuilt": false,
+    "platforms": [
+      "Active Directory"
+    ],
+    "category": "Domain Information",
+    "description": "View all GPOs that are applied to any specific computer. This query identifies GPOs that are applied at both the Domain Level and the OU level, saving time in large Active Directory environments where GPO inheritance is complex. Replace \"COMPUTER_NAME\" with the target computer name or a substring. Note this does not take OU 'Block inheritance' and GPO 'No Override' into account.",
+    "query": "// Replace \"HOSTNAME/FQDN\" with the computer's\nMATCH p=(c:Computer)<-[:Contains*..]-(:Base)<-[:GPLink]-(:GPO)\nWHERE toLower(c.name) CONTAINS toLower(\"HOSTNAME/FQDN\")\nRETURN p",
+    "revision": 1,
+    "resources": [
+      "https://learn.microsoft.com/en-us/previous-versions/windows/desktop/Policy/overriding-and-blocking-group-policy"
+    ],
+    "acknowledgements": [
+      "Adnan Ullah Khan, @auk0x01"
     ]
   },
   {
@@ -296,6 +314,20 @@
     ]
   },
   {
+    "name": "Enrollment rights on certificate templates published to Enterprise CA with vulnerable HTTP(S) endpoint (ESC8)",
+    "guid": "1c1435b1-bad0-49f2-ba7d-932e047c0af4",
+    "prebuilt": true,
+    "platforms": [
+      "Active Directory"
+    ],
+    "category": "Active Directory Certificate Services",
+    "description": null,
+    "query": "MATCH p = (:Base)-[:Enroll|GenericAll|AllExtendedRights]->(ct:CertTemplate)-[:PublishedTo]->(eca:EnterpriseCA)\nWHERE eca.hasvulnerableendpoint = True\nRETURN p\nLIMIT 1000",
+    "revision": 1,
+    "resources": [],
+    "acknowledgements": []
+  },
+  {
     "name": "Foreign principals in Tier Zero / High Value targets",
     "guid": "95bec736-86ef-4017-8465-9b9b66548b17",
     "prebuilt": true,
@@ -333,8 +365,8 @@
     ],
     "category": "Shortest Paths",
     "description": null,
-    "query": "MATCH p=shortestPath((s:Base)-[:AD_ATTACK_PATHS*1..]->(t:Base))\nWHERE (s:Tag_Owned)\nAND s<>t\nRETURN p\nLIMIT 1000",
-    "revision": 2,
+    "query": "MATCH p=shortestPath((s:Base)-[:AD_ATTACK_PATHS*1..]->(t:Base))\nWHERE ((s:Tag_Owned) OR COALESCE(s.system_tags, '') CONTAINS 'owned')\nAND s<>t\nRETURN p\nLIMIT 1000",
+    "revision": 3,
     "resources": [],
     "acknowledgements": []
   },
@@ -347,8 +379,8 @@
     ],
     "category": "Kerberos Interaction",
     "description": null,
-    "query": "MATCH (u:User)\nWHERE (u:Tag_Tier_Zero) AND u.hasspn=true\nAND u.enabled = true\nAND NOT u.objectid ENDS WITH '-502'\nAND NOT COALESCE(u.gmsa, false) = true\nAND NOT COALESCE(u.msa, false) = true \nRETURN u\nLIMIT 100",
-    "revision": 1,
+    "query": "MATCH (u:User)\nWHERE ((u:Tag_Tier_Zero) OR COALESCE(u.system_tags, '') CONTAINS 'admin_tier_0') AND u.hasspn=true\nAND u.enabled = true\nAND NOT u.objectid ENDS WITH '-502'\nAND NOT COALESCE(u.gmsa, false) = true\nAND NOT COALESCE(u.msa, false) = true \nRETURN u\nLIMIT 100",
+    "revision": 2,
     "resources": [
       "https://attack.mitre.org/techniques/T1558/003/"
     ],
@@ -364,6 +396,20 @@
     "category": "Active Directory Certificate Services",
     "description": null,
     "query": "MATCH p = (:Base)-[:Enroll|GenericAll|AllExtendedRights]->(ct:CertTemplate)-[:PublishedTo]->(:EnterpriseCA)\nWHERE '1.3.6.1.4.1.311.20.2.1' IN ct.effectiveekus\nOR '2.5.29.37.0' IN ct.effectiveekus\nOR SIZE(ct.effectiveekus) = 0\nRETURN p\nLIMIT 1000",
+    "revision": 1,
+    "resources": [],
+    "acknowledgements": []
+  },
+  {
+    "name": "Entra Users with Entra Admin Role approval (group delegated)",
+    "guid": "b70a6512-21e1-4d6e-926a-fba44646085d",
+    "prebuilt": true,
+    "platforms": [
+      "Azure"
+    ],
+    "category": "General",
+    "description": null,
+    "query": "MATCH p = (:AZUser)-[:AZMemberOf]->(:AZGroup)-[:AZRoleApprover]->(:AZRole)\nRETURN p LIMIT 100",
     "revision": 1,
     "resources": [],
     "acknowledgements": []
@@ -415,6 +461,22 @@
     "revision": 1,
     "resources": [],
     "acknowledgements": []
+  },
+  {
+    "name": "Locations of Owned objects",
+    "guid": "350b8b8a-ea4c-44f3-874b-c9316de6c41b",
+    "prebuilt": false,
+    "platforms": [
+      "Azure"
+    ],
+    "category": "General",
+    "description": null,
+    "query": "MATCH p = (t:AZBase)<-[:AZContains*1..]-(:AZTenant)\nWHERE ((t:Tag_Owned) OR COALESCE(t.system_tags, '') CONTAINS 'owned')\nRETURN p\nLIMIT 1000",
+    "revision": 1,
+    "resources": [],
+    "acknowledgements": [
+      "Martin Sohn Christensen, @martinsohndk"
+    ]
   },
   {
     "name": "Enrollment rights on published certificate templates with no security extension",
@@ -505,22 +567,6 @@
     ]
   },
   {
-    "name": "Collection health of specific computer",
-    "guid": "bb95c9c5-984c-4057-a430-000d684c069a",
-    "prebuilt": false,
-    "platforms": [
-      "Active Directory"
-    ],
-    "category": "Domain Information",
-    "description": "Returns Local groups and their members, and Principals with privileges",
-    "query": "MATCH p=(m:Base)-[:RemoteInteractiveLogonRight|AdminTo|CanRDP|LocalToComputer|MemberOfLocalGroup]-(n:Base)\n\n// Insert computer FQDN\nWHERE m.name ENDS WITH \"HOSTNAME.DOMAIN.LOCAL\"\n\nRETURN p",
-    "revision": 1,
-    "resources": [],
-    "acknowledgements": [
-      "Martin Sohn Christensen, @martinsohndk"
-    ]
-  },
-  {
     "name": "Principals with foreign domain group membership",
     "guid": "8fb3214a-5a75-4ecd-b293-c121abd94b4b",
     "prebuilt": true,
@@ -574,9 +620,9 @@
       "Active Directory"
     ],
     "category": "Shortest Paths",
-    "description": null,
+    "description": "WARNING! MANY-TO-MANY SHORTEST PATH QUERIES USE EXCESSIVE SYSTEM RESOURCES AND TYPICALLY WILL NOT COMPLETE",
     "query": "// MANY TO MANY SHORTEST PATH QUERIES USE EXCESSIVE SYSTEM RESOURCES AND TYPICALLY WILL NOT COMPLETE\nMATCH p=shortestPath((s:Tag_Owned)-[:AD_ATTACK_PATHS*1..]->(t:Base))\nWHERE s<>t\nAND ((t:Tag_Tier_Zero) OR COALESCE(t.system_tags, '') CONTAINS 'admin_tier_0')\nRETURN p\nLIMIT 1000",
-    "revision": 2,
+    "revision": 4,
     "resources": [],
     "acknowledgements": []
   },
@@ -604,6 +650,21 @@
     "category": "Active Directory Hygiene",
     "description": null,
     "query": "MATCH (n:Base)\nWHERE n.enabled = true\nAND n.usedeskeyonly = true\nRETURN n",
+    "revision": 1,
+    "resources": [],
+    "acknowledgements": []
+  },
+  {
+    "name": "Synced Entra Users with Entra Admin Role approval (group delegated)",
+    "guid": "ead56ecb-fb88-427c-8f39-75e774bb9a0a",
+    "prebuilt": true,
+    "platforms": [
+      "Active Directory",
+      "Azure"
+    ],
+    "category": "Cross Platform Attack Paths",
+    "description": null,
+    "query": "MATCH p = (:User)-[:SyncedToEntraUser]->(:AZUser)-[:AZMemberOf]->(:AZGroup)-[:AZRoleApprover]->(:AZRole)\nRETURN p LIMIT 100",
     "revision": 1,
     "resources": [],
     "acknowledgements": []
@@ -810,6 +871,21 @@
     ]
   },
   {
+    "name": "Synced Entra Users with Entra Admin Roles group delegated eligibility",
+    "guid": "bc610e20-e5c0-41f3-9e8e-7378f87a3f71",
+    "prebuilt": true,
+    "platforms": [
+      "Active Directory",
+      "Azure"
+    ],
+    "category": "Cross Platform Attack Paths",
+    "description": null,
+    "query": "MATCH p = (:User)-[:SyncedToEntraUser]->(:AZUser)-[:AZMemberOf]->(:AZGroup)-[:AZRoleEligible]->(:AZRole)\nRETURN p LIMIT 100",
+    "revision": 1,
+    "resources": [],
+    "acknowledgements": []
+  },
+  {
     "name": "Computers with membership in Protected Users",
     "guid": "a26372f4-2e92-49f6-8993-6657fbc1569a",
     "prebuilt": true,
@@ -818,8 +894,8 @@
     ],
     "category": "NTLM Relay Attacks",
     "description": null,
-    "query": "MATCH p = (:Base)-[:MemberOf*1..]->(g:Group)\nWHERE g.objectid ENDS WITH \"-525\"\nRETURN p LIMIT 1000",
-    "revision": 1,
+    "query": "MATCH p = (:Base)-[:MemberOf*1..]->(g:Group)\nWHERE g.objectid ENDS WITH '-525'\nRETURN p LIMIT 1000",
+    "revision": 2,
     "resources": [],
     "acknowledgements": []
   },
@@ -892,6 +968,20 @@
     ]
   },
   {
+    "name": "Tier Zero principals without AdminSDHolder protection",
+    "guid": "82ce5e2e-415b-489d-b891-304e8bb25998",
+    "prebuilt": true,
+    "platforms": [
+      "Active Directory"
+    ],
+    "category": "Active Directory Hygiene",
+    "description": null,
+    "query": "MATCH (n:Base)\nWHERE ((n:Tag_Tier_Zero) OR COALESCE(n.system_tags, '') CONTAINS 'admin_tier_0')\nAND n.adminsdholderprotected = false\nRETURN n\nLIMIT 500",
+    "revision": 1,
+    "resources": [],
+    "acknowledgements": []
+  },
+  {
     "name": "Domains where any user can join a computer to the domain",
     "guid": "421921fa-bc0f-4659-9680-b7481adcb132",
     "prebuilt": true,
@@ -900,8 +990,8 @@
     ],
     "category": "Active Directory Hygiene",
     "description": null,
-    "query": "MATCH (n:Domain)\nWHERE n.machineaccountquota > 0\nRETURN n",
-    "revision": 1,
+    "query": "MATCH (d:Domain)\nWHERE d.machineaccountquota > 0\nRETURN d",
+    "revision": 2,
     "resources": [
       "https://learn.microsoft.com/en-us/troubleshoot/windows-server/active-directory/default-workstation-numbers-join-domain",
       "https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-10/security/threat-protection/security-policy-settings/add-workstations-to-domain"
@@ -947,10 +1037,10 @@
     "platforms": [
       "Azure"
     ],
-    "category": "Kerberos Interaction",
+    "category": "General",
     "description": "Maps the structure of Azure Management",
     "query": "MATCH p = (:AZTenant)-[:AZContains*1..]->(:AZResourceGroup)\nRETURN p\nLIMIT 1000",
-    "revision": 1,
+    "revision": 2,
     "resources": [
       "https://learn.microsoft.com/en-us/azure/governance/management-groups/overview"
     ],
@@ -1051,6 +1141,20 @@
     "acknowledgements": []
   },
   {
+    "name": "Entra Users with Entra Admin Roles group delegated eligibility",
+    "guid": "2e36c81b-25ed-40ba-afec-5f5f6443e095",
+    "prebuilt": true,
+    "platforms": [
+      "Azure"
+    ],
+    "category": "General",
+    "description": null,
+    "query": "MATCH p = (:AZUser)-[:AZMemberOf]->(:AZGroup)-[:AZRoleEligible]->(:AZRole)\nRETURN p LIMIT 100",
+    "revision": 1,
+    "resources": [],
+    "acknowledgements": []
+  },
+  {
     "name": "Principals with DCSync privileges",
     "guid": "6e9beb8a-ad14-43de-bda1-644d174a5906",
     "prebuilt": true,
@@ -1102,7 +1206,7 @@
     ]
   },
   {
-    "name": "Non-Tier Zero account with excessive control",
+    "name": "Non-Tier Zero object with excessive control",
     "guid": "944cecfe-519b-4318-b226-e8520161b454",
     "prebuilt": false,
     "platforms": [
@@ -1111,7 +1215,7 @@
     "category": "Dangerous Privileges",
     "description": "Returns non-Tier Zero principals with >= 1000 direct rights to other principals. This does not include rights from group memberships.",
     "query": "MATCH (n:Base)-[r:AD_ATTACK_PATHS]->(m:Base)\nWHERE NOT r:MemberOf\nAND NOT ((n:Tag_Tier_Zero) OR COALESCE(n.system_tags, '') CONTAINS 'admin_tier_0')\nWITH n, COLLECT(DISTINCT(m)) AS endNodes\nWHERE SIZE(endNodes) >= 1000\nRETURN n",
-    "revision": 3,
+    "revision": 4,
     "resources": [],
     "acknowledgements": [
       "Martin Sohn Christensen, @martinsohndk"
@@ -1126,9 +1230,13 @@
     ],
     "category": "Active Directory Hygiene",
     "description": null,
-    "query": "MATCH p=(n:Computer)-[r:MemberOf]->(g:Group)\nWHERE NOT g.objectid ENDS WITH \"-515\" // Domain Computers\nAND NOT g.objectid ENDS WITH \"-516\" // Domain Controllers\nAND NOT g.objectid ENDS WITH \"-521\" // Read-Only Domain Controllers\nAND r.isprimarygroup = true\nRETURN p",
-    "revision": 1,
-    "resources": [],
+    "query": "MATCH p=(n:Computer)-[r:MemberOf]->(g:Group)\nWHERE NOT g.objectid ENDS WITH \"-515\" // Domain Computers\nAND NOT n.isdc = true\nAND NOT n.isreadonlydc = true\nAND r.isprimarygroup = true\nRETURN p",
+    "revision": 2,
+    "resources": [
+      "https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-ada3/e12954a4-6865-4432-94e6-00c310ca87c0",
+      "https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-adts/5dbcf875-e802-4357-a6e2-1bdff19ff9b5",
+      "https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-adts/73d11ea7-e634-453e-944d-559654cc91c5"
+    ],
     "acknowledgements": [
       "Martin Sohn Christensen, @martinsohndk"
     ]
@@ -1216,6 +1324,21 @@
     "category": "Active Directory Hygiene",
     "description": null,
     "query": "MATCH (u:Base)\nWHERE 'DES-CBC-CRC' IN u.supportedencryptiontypes\nOR 'DES-CBC-MD5' IN u.supportedencryptiontypes\nOR 'RC4-HMAC-MD5' IN u.supportedencryptiontypes\nRETURN u",
+    "revision": 1,
+    "resources": [],
+    "acknowledgements": []
+  },
+  {
+    "name": "Synced Entra Users with Entra Admin Role approval (direct)",
+    "guid": "1bfe2d75-0a51-4dbe-abc6-178cc0e4476f",
+    "prebuilt": true,
+    "platforms": [
+      "Active Directory",
+      "Azure"
+    ],
+    "category": "Cross Platform Attack Paths",
+    "description": null,
+    "query": "MATCH p = (:User)-[:SyncedToEntraUser]->(:AZUser)-[:AZRoleApprover]->(:AZRole)\nRETURN p LIMIT 100",
     "revision": 1,
     "resources": [],
     "acknowledgements": []
@@ -1317,6 +1440,20 @@
     "acknowledgements": []
   },
   {
+    "name": "CA Administrators and CA Managers (ESC7)",
+    "guid": "77a708b8-962e-4c3d-ad70-e994126aaeba",
+    "prebuilt": true,
+    "platforms": [
+      "Active Directory"
+    ],
+    "category": "Active Directory Certificate Services",
+    "description": null,
+    "query": "MATCH p = (:Base)-[:ManageCertificates|ManageCA]->(:EnterpriseCA)\nRETURN p\nLIMIT 1000",
+    "revision": 1,
+    "resources": [],
+    "acknowledgements": []
+  },
+  {
     "name": "Domains exempting privileged groups from AdminSDHolder protections",
     "guid": "79f8d8f9-8291-4bf7-a13a-15989018075f",
     "prebuilt": false,
@@ -1343,8 +1480,8 @@
     ],
     "category": "Active Directory Hygiene",
     "description": null,
-    "query": "MATCH (n:Base)\nWHERE ((n:Tag_Tier_Zero) OR COALESCE(n.system_tags, '') CONTAINS 'admin_tier_0')\nAND (n:User or n:Computer)\nWITH n\nOPTIONAL MATCH (n)-[:MemberOf*1..]->(m:Group)\nWHERE m.objectid ENDS WITH '-519'\nWITH n, m\nWHERE m IS NULL\nRETURN n",
-    "revision": 1,
+    "query": "// Get all Tier Zero accounts that are members of Denied RODC Password Replication Group\nMATCH (n:Base)-[:MemberOf*1..]->(m:Group)\nWHERE ((n:Tag_Tier_Zero) OR COALESCE(n.system_tags, '') CONTAINS 'admin_tier_0')\nAND (n:User OR n:Computer)\nAND m.objectid ENDS WITH '-519'\nWITH COLLECT(n.objectid) AS MembersOfDeniedGroup\n\n// Get all Tier Zero accounts\nMATCH (x:Base)\nWHERE ((x:Tag_Tier_Zero) OR COALESCE(x.system_tags, '') CONTAINS 'admin_tier_0')\nAND (x:User OR x:Computer)\n\n// Filter the members of Denied RODC Password Replication Group\nAND NOT x.objectid IN MembersOfDeniedGroup\nRETURN x",
+    "revision": 2,
     "resources": [],
     "acknowledgements": [
       "Martin Sohn Christensen, @martinsohndk"
@@ -1439,8 +1576,8 @@
     ],
     "category": "General",
     "description": null,
-    "query": "MATCH p = (:AZBase)-[:AZGlobalAdmin*1..]->(:AZTenant)\nRETURN p\nLIMIT 1000",
-    "revision": 1,
+    "query": "MATCH p=(:AZBase)-[:AZHasRole*1..]->(t:AZRole)\nWHERE t.name =~ '(?i)Global Administrator.*'\nRETURN p\nLIMIT 1000",
+    "revision": 2,
     "resources": [],
     "acknowledgements": []
   },
@@ -1565,9 +1702,23 @@
       "Azure"
     ],
     "category": "Shortest Paths",
-    "description": null,
+    "description": "WARNING! MANY-TO-MANY SHORTEST PATH QUERIES USE EXCESSIVE SYSTEM RESOURCES AND TYPICALLY WILL NOT COMPLETE",
     "query": "MATCH p=shortestPath((s:AZApp)-[:AZ_ATTACK_PATHS*1..]->(t:AZBase))\nWHERE ((t:Tag_Tier_Zero) OR COALESCE(t.system_tags, '') CONTAINS 'admin_tier_0') AND s<>t\nRETURN p\nLIMIT 1000",
-    "revision": 2,
+    "revision": 3,
+    "resources": [],
+    "acknowledgements": []
+  },
+  {
+    "name": "Compromising permissions on ADCS nodes (ESC5)",
+    "guid": "396c7b67-fb5d-4c04-bb13-8007f0dfc9b1",
+    "prebuilt": true,
+    "platforms": [
+      "Active Directory"
+    ],
+    "category": "Active Directory Certificate Services",
+    "description": null,
+    "query": "MATCH p = (n:Base)-[:Owns|WriteOwner|WriteDacl|GenericAll|GenericWrite]->(m:Base)\nWHERE m.distinguishedname CONTAINS \"PUBLIC KEY SERVICES\"\nAND NOT n.objectid ENDS WITH \"-512\" // Domain Admins\nAND NOT n.objectid ENDS WITH \"-519\" // Enterprise Admins\nAND NOT n.objectid ENDS WITH \"-544\" // Administrators\nRETURN p\nLIMIT 1000",
+    "revision": 1,
     "resources": [],
     "acknowledgements": []
   },
@@ -1579,7 +1730,7 @@
       "Azure"
     ],
     "category": "Shortest Paths",
-    "description": null,
+    "description": "WARNING! MANY-TO-MANY SHORTEST PATH QUERIES USE EXCESSIVE SYSTEM RESOURCES AND TYPICALLY WILL NOT COMPLETE",
     "query": "MATCH p=shortestPath((s:AZUser)-[:AZ_ATTACK_PATHS*1..]->(t:AZBase))\nWHERE ((t:Tag_Tier_Zero) OR COALESCE(t.system_tags, '') CONTAINS 'admin_tier_0')\nRETURN p\nLIMIT 1000",
     "revision": 3,
     "resources": [],
@@ -1655,9 +1806,9 @@
       "Azure"
     ],
     "category": "Shortest Paths",
-    "description": null,
+    "description": "WARNING! MANY-TO-MANY SHORTEST PATH QUERIES USE EXCESSIVE SYSTEM RESOURCES AND TYPICALLY WILL NOT COMPLETE",
     "query": "MATCH p=shortestPath((s:AZBase)-[:AZ_ATTACK_PATHS*1..]->(t:AZSubscription))\nWHERE s<>t\nRETURN p\nLIMIT 1000",
-    "revision": 2,
+    "revision": 3,
     "resources": [],
     "acknowledgements": []
   },
@@ -1694,6 +1845,20 @@
     ]
   },
   {
+    "name": "Location of AdminSDHolder Protected objects",
+    "guid": "3408ccaf-1f42-4c10-b09a-e986661f84d7",
+    "prebuilt": true,
+    "platforms": [
+      "Active Directory"
+    ],
+    "category": "Domain Information",
+    "description": null,
+    "query": "MATCH p = (n:Base)<-[:Contains*1..]-(:Domain)\nWHERE n.adminsdholderprotected = True\nRETURN p\nLIMIT 1000",
+    "revision": 1,
+    "resources": [],
+    "acknowledgements": []
+  },
+  {
     "name": "Computers with the outgoing NTLM setting set to Deny all",
     "guid": "a9ddca74-feeb-4dbf-8b0f-de08b3cfa8a6",
     "prebuilt": true,
@@ -1706,6 +1871,36 @@
     "revision": 1,
     "resources": [],
     "acknowledgements": []
+  },
+  {
+    "name": "Enrollment rights on certificate templates published to Enterprise CA with User Specified SAN enabled (ESC6)",
+    "guid": "ab14e9dc-996c-4737-878c-583c19cdbf5a",
+    "prebuilt": true,
+    "platforms": [
+      "Active Directory"
+    ],
+    "category": "Active Directory Certificate Services",
+    "description": null,
+    "query": "MATCH p = (:Base)-[:Enroll|GenericAll|AllExtendedRights]->(ct:CertTemplate)-[:PublishedTo]->(eca:EnterpriseCA)\nWHERE eca.isuserspecifiessanenabled = True\nRETURN p\nLIMIT 1000",
+    "revision": 1,
+    "resources": [],
+    "acknowledgements": []
+  },
+  {
+    "name": "Locations of Owned objects",
+    "guid": "c88bfab4-3da0-4b36-b71d-7b324ebd2243",
+    "prebuilt": false,
+    "platforms": [
+      "Active Directory"
+    ],
+    "category": "Domain Information",
+    "description": null,
+    "query": "MATCH p = (t:Base)<-[:Contains*1..]-(:Domain)\nWHERE ((t:Tag_Owned) OR COALESCE(t.system_tags, '') CONTAINS 'owned')\nRETURN p\nLIMIT 1000",
+    "revision": 1,
+    "resources": [],
+    "acknowledgements": [
+      "Martin Sohn Christensen, @martinsohndk"
+    ]
   },
   {
     "name": "Users with passwords not rotated in over 1 year",
@@ -1738,20 +1933,18 @@
     ]
   },
   {
-    "name": "Trace ACE inheritance",
-    "guid": "8c5454df-3ae8-412c-b271-3c4c55df7141",
-    "prebuilt": false,
+    "name": "Entra Users with Entra Admin Role direct eligibility",
+    "guid": "b87899ce-3a51-401a-ae39-ef271b566e3d",
+    "prebuilt": true,
     "platforms": [
-      "Active Directory"
+      "Azure"
     ],
-    "category": "Domain Information",
-    "description": "When BloodHound shows that an inherited ACE applies to an object it does not show the source/where it is inherited from from (OU, Container, Domain root) - the source is where it should be remediated. This query can sometimes find the source of an inherited ACE, but only works if the ACE is set to also apply to the source itself.",
-    "query": "// Replace INSERT_OBJECT_ID with the affected principal\n// Replace 'GenericAll' with the specific edge you're tracing\nWITH \"INSERT_OBJECT_ID\" as OID\nMATCH p=()-[:GenericAll {isacl:true,isinherited:false}]->()-[:Contains*1..]->(:Base{objectid:OID})\nWHERE NONE(ou in NODES(p) WHERE ou:OU AND ou.isaclprotected IS NOT NULL)\nRETURN p",
+    "category": "General",
+    "description": null,
+    "query": "MATCH p = (:AZUser)-[:AZRoleEligible]->(:AZRole)\nRETURN p LIMIT 100",
     "revision": 1,
     "resources": [],
-    "acknowledgements": [
-      "Walter.Legowski, @SadProcessor"
-    ]
+    "acknowledgements": []
   },
   {
     "name": "Foreign Service Principals With any Abusable MS Graph App Role Assignment",
@@ -1884,6 +2077,20 @@
     ]
   },
   {
+    "name": "AdminSDHolder to protected objects relationship",
+    "guid": "c751f95c-8bb0-4be4-b027-84f5709c91d2",
+    "prebuilt": true,
+    "platforms": [
+      "Active Directory"
+    ],
+    "category": "Active Directory Hygiene",
+    "description": null,
+    "query": "MATCH p=(n)-[:ProtectAdminGroups]->(m)\nRETURN p\nLIMIT 1000",
+    "revision": 1,
+    "resources": [],
+    "acknowledgements": []
+  },
+  {
     "name": "Disabled Tier Zero / High Value principals",
     "guid": "d65a801f-d3ef-4b7e-8030-99ebfd6dad12",
     "prebuilt": true,
@@ -1932,6 +2139,20 @@
     "acknowledgements": [
       "Martin Sohn Christensen, @martinsohndk"
     ]
+  },
+  {
+    "name": "Accounts with smart card required in domains where smart account passwords do not expire",
+    "guid": "bba7985e-f32a-4c62-b1b0-0365bf1455e6",
+    "prebuilt": true,
+    "platforms": [
+      "Active Directory"
+    ],
+    "category": "Active Directory Hygiene",
+    "description": null,
+    "query": "MATCH p=(s:Domain)-[:Contains*1..]->(t:Base)\nWHERE s.expirepasswordsonsmartcardonlyaccounts = false\nAND t.enabled = true\nAND t.smartcardrequired = true\nRETURN p",
+    "revision": 1,
+    "resources": [],
+    "acknowledgements": []
   },
   {
     "name": "Overprivileged Microsoft Entra Connect accounts",
@@ -2122,6 +2343,20 @@
     "acknowledgements": []
   },
   {
+    "name": "Entra Users with Entra Admin Role approval (direct)",
+    "guid": "74d7993c-24af-4df7-8402-5c6fb22d088c",
+    "prebuilt": true,
+    "platforms": [
+      "Azure"
+    ],
+    "category": "General",
+    "description": null,
+    "query": "MATCH p = (:AZUser)-[:AZRoleApprover]->(:AZRole)\nRETURN p LIMIT 100",
+    "revision": 1,
+    "resources": [],
+    "acknowledgements": []
+  },
+  {
     "name": "Accounts with SID History",
     "guid": "8172d52c-a975-49bd-9180-5b6efc59c9ab",
     "prebuilt": false,
@@ -2160,8 +2395,8 @@
     ],
     "category": "Shortest Paths",
     "description": null,
-    "query": "MATCH p=shortestPath((s)-[:AD_ATTACK_PATHS*1..]->(t:Tag_Tier_Zero))\nWHERE s<>t\nRETURN p\nLIMIT 1000",
-    "revision": 2,
+    "query": "MATCH p=shortestPath((s)-[:AD_ATTACK_PATHS*1..]->(t:Base))\nWHERE ((t:Tag_Tier_Zero) OR (COALESCE(t.system_tags, '') CONTAINS 'admin_tier_0'))\nAND s<>t\nRETURN p\nLIMIT 1000",
+    "revision": 3,
     "resources": [],
     "acknowledgements": []
   },
@@ -2421,7 +2656,7 @@
       "Azure"
     ],
     "category": "Shortest Paths",
-    "description": null,
+    "description": "WARNING! MANY-TO-MANY SHORTEST PATH QUERIES USE EXCESSIVE SYSTEM RESOURCES AND TYPICALLY WILL NOT COMPLETE",
     "query": "MATCH p=shortestPath((s:AZBase)-[:AZ_ATTACK_PATHS*1..]->(t:AZRole))\nWHERE t.name =~ '(?i)Global Administrator|User Administrator|Cloud Application Administrator|Authentication Policy Administrator|Exchange Administrator|Helpdesk Administrator|Privileged Authentication Administrator|Privileged Role Administrator' AND s<>t\nRETURN p\nLIMIT 1000",
     "revision": 3,
     "resources": [],
@@ -2584,6 +2819,21 @@
     ]
   },
   {
+    "name": "Synced Entra Users with Entra Admin Role direct eligibility",
+    "guid": "ea82e359-725c-4881-83e9-35007e859cf5",
+    "prebuilt": true,
+    "platforms": [
+      "Active Directory",
+      "Azure"
+    ],
+    "category": "Cross Platform Attack Paths",
+    "description": null,
+    "query": "MATCH p = (:User)-[:SyncedToEntraUser]->(:AZUser)-[:AZRoleEligible]->(:AZRole)\nRETURN p LIMIT 100",
+    "revision": 1,
+    "resources": [],
+    "acknowledgements": []
+  },
+  {
     "name": "Tier Zero / High Value enabled users not requiring smart card authentication",
     "guid": "867f9f17-c149-4c4b-ad84-9a807622ff8c",
     "prebuilt": true,
@@ -2696,8 +2946,8 @@
     ],
     "category": "Dangerous Privileges",
     "description": null,
-    "query": "MATCH p=(s:Group)-[:AD_ATTACK_PATHS]->(:Base)\nWHERE s.objectid ENDS WITH '-513'\nRETURN p\nLIMIT 1000",
-    "revision": 2,
+    "query": "MATCH p=(s:Group)-[r:AD_ATTACK_PATHS]->(:Base)\nWHERE s.objectid ENDS WITH '-513'\nAND NOT r:MemberOf\nRETURN p\nLIMIT 1000",
+    "revision": 3,
     "resources": [],
     "acknowledgements": []
   }
