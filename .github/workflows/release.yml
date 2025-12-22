@@ -51,6 +51,10 @@ jobs:
       - name: Convert queries into single zip file
         run: |
           python utilities/python/convert.py ./queries ./Queries.zip --file-format zip
+
+      - name: Convert queries into single json file
+        run: |
+          python utilities/python/convert.py ./queries ./Queries.json
       
       - name: Set metadata
         id: release_meta
@@ -67,6 +71,7 @@ jobs:
           name: ${{ steps.release_meta.outputs.release_name }}
           files: |
             Queries.zip
+            Queries.json
           body: | 
             This release contains all queries exported as JSON and bundled in a single file. The compressed .zip file can be uploaded to BloodHound to bulk-import all queries.
           draft: true
