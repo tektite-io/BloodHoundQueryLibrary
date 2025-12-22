@@ -65,6 +65,8 @@ jobs:
         with:
           tag_name: ${{ steps.release_meta.outputs.release_tag }}
           name: ${{ steps.release_meta.outputs.release_name }}
-          files: Queries.zip
-          # generate_release_notes: true
+          files: |
+            Queries.zip
+          body: | 
+            This release contains all queries exported as JSON and bundled in a single file. The compressed .zip file can be uploaded to BloodHound to bulk-import all queries.
           draft: true
