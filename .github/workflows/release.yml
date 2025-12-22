@@ -1,6 +1,9 @@
 name: Generate query bundle and push release
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - feature/ziprelease
 
 jobs:
   test:
